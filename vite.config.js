@@ -14,5 +14,12 @@ export default defineConfig({
     ],
     server: {
         cors: true,
+        // mobile testing
+        host: '0.0.0.0',
+        port: 5173, // or your Vite port
+        strictPort: true,
+        hmr: {
+            host: '192.168.1.19', // e.g., '192.168.1.5'
+        },
     },
 });

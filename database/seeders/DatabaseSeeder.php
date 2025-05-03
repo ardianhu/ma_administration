@@ -2,6 +2,9 @@
 
 namespace Database\Seeders;
 
+use App\Models\Dorm;
+use App\Models\IslamicClass;
+use App\Models\Role;
 use App\Models\User;
 // use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
@@ -15,9 +18,31 @@ class DatabaseSeeder extends Seeder
     {
         // User::factory(10)->create();
 
+        Role::create([
+            'name' => 'admin',
+        ]);
+        Role::create([
+            'name' => 'sekretaris',
+        ]);
+        Role::create([
+            'name' => 'keamanan',
+        ]);
+        Role::create([
+            'name' => 'kesehatan',
+        ]);
+        Dorm::create([
+            'block' => 'A',
+            'room_number' => 1,
+            'capacity' => 16,
+        ]);
+        IslamicClass::create([
+            'name' => 'Awwaliyah',
+            'iteration' => 1,
+        ]);
         User::factory()->create([
-            'name' => 'Test User',
-            'email' => 'test@example.com',
+            'name' => 'jaka',
+            'email' => 'jaka@gmail.com',
+            'role_id' => 1,
         ]);
     }
 }

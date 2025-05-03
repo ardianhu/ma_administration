@@ -14,6 +14,18 @@
             <flux:navlist variant="outline">
                 <flux:navlist.group :heading="__('Platform')" class="grid">
                     <flux:navlist.item icon="home" :href="route('dashboard')" :current="request()->routeIs('dashboard')" wire:navigate>{{ __('Dashboard') }}</flux:navlist.item>
+                    <flux:navlist.item icon="user" :href="route('users')" :current="request()->routeIs('users')" wire:navigate>{{ __('User') }}</flux:navlist.item>
+                    <flux:navlist.item icon="user" :href="route('roles')" :current="request()->routeIs('role')" wire:navigate>{{ __('Roles') }}</flux:navlist.item>
+                </flux:navlist.group>
+                <flux:navlist.group :heading="__('Data Utama')" class="grid">
+                    <flux:navlist.item icon="users" :href="route('students')" :current="request()->routeIs('students')" wire:navigate>{{ __('Santri') }}</flux:navlist.item>
+                    <flux:navlist.item icon="building-office" :href="route('dorms')" :current="request()->routeIs('dorms')" wire:navigate>{{ __('Asrama') }}</flux:navlist.item>
+                    <flux:navlist.item icon="building-office-2" :href="route('class')" :current="request()->routeIs('class')" wire:navigate>{{ __('Kelas') }}</flux:navlist.item>
+                    <flux:navlist.item icon="calendar" :href="route('academic-years')" :current="request()->routeIs('academic-years')" wire:navigate>{{ __('Tahun Ajar') }}</flux:navlist.item>
+                </flux:navlist.group>
+                <flux:navlist.group :heading="__('Perizinan')" class="grid">
+                    <flux:navlist.item icon="document-plus" :href="route('permits.form')" :current="request()->routeIs('permits.form')" wire:navigate>{{ __('Perizinan') }}</flux:navlist.item>
+                    <flux:navlist.item icon="document-text" :href="route('permits')" :current="request()->routeIs('permits')" wire:navigate>{{ __('Daftar Perizinan') }}</flux:navlist.item>
                 </flux:navlist.group>
             </flux:navlist>
 
