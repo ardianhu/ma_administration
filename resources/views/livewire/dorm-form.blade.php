@@ -14,6 +14,11 @@
                     @error('room_number') <span class="text-red-500">{{ $message }}</span> @enderror
                     <flux:input wire:model="capacity" :label="__('Kapasitas')" type="number" required autofocus autocomplete="capacity"/>
                     @error('capacity') <span class="text-red-500">{{ $message }}</span> @enderror
+                    <flux:select wire:model="zone" :label="__('Kawasan')" placeholder="Putra/Putri">
+                        <flux:select.option value="putra">Putra</flux:select.option>
+                        <flux:select.option value="putri">Putri</flux:select.option>
+                    </flux:select>
+                    @error('zone') <span class="text-red-500">{{ $message }}</span> @enderror
                   <div>
                     <flux:button type="submit" class="w-full lg:w-auto" variant="primary">{{ $dorm ? 'Update Asrama' : 'Buat Asrama' }}</flux:button>
                   </div>

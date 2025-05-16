@@ -2,6 +2,7 @@
 
 namespace Database\Seeders;
 
+use App\Models\AcademicYear;
 use App\Models\Dorm;
 use App\Models\IslamicClass;
 use App\Models\Role;
@@ -17,7 +18,6 @@ class DatabaseSeeder extends Seeder
     public function run(): void
     {
         // User::factory(10)->create();
-
         Role::create([
             'name' => 'admin',
         ]);
@@ -34,10 +34,12 @@ class DatabaseSeeder extends Seeder
             'block' => 'A',
             'room_number' => 1,
             'capacity' => 16,
+            'zone' => 'putra',
         ]);
         IslamicClass::create([
             'name' => 'Awwaliyah',
-            'iteration' => 1,
+            'class' => 1,
+            'sub_class' => 1,
         ]);
         User::factory()->create([
             'name' => 'jaka',

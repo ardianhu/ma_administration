@@ -10,14 +10,33 @@
                 <div class="flex items-center justify-between mb-4">
                     <h2 class="text-lg flex-1 font-semibold text-gray-900 dark:text-white">Daftar Perizinan</h2>
                     <div class="flex items-center justify-end flex-1 gap-2">
-                        <flux:input icon="magnifying-glass" class="hidden md:inline" wire:model.live.debounce.300ms="search" placeholder="Cari santri" />
+                        <flux:dropdown>
+                            <flux:button icon="funnel">Filter</flux:button>
+
+                            <flux:menu>
+                                <flux:menu.item href="{{ route('permits') }}">Semua</flux:menu.item>
+
+                                <flux:menu.separator />
+
+                                <flux:menu.item href="{{ route('permits', ['status' => 'active']) }}">Belum datang</flux:menu.item>
+
+                                <flux:menu.separator />
+
+                                <flux:menu.item href="{{ route('permits', ['status' => 'inactive']) }}">Datang</flux:menu.item>
+
+                                <flux:menu.separator />
+
+                                <flux:menu.item href="{{ route('permits', ['status' => 'late']) }}">Lambat</flux:menu.item>
+                            </flux:menu>
+                        </flux:dropdown>
+                        <flux:input icon="magnifying-glass" class="hidden md:inline" wire:model.live.debounce.300ms="search" placeholder="Cari santri" autocomplete="off" />
                         <a href={{ route('permits.form') }}>
                             <flux:button variant="primary">Buat Izin</flux:button>
                         </a>
                     </div>
                 </div>
                 <div class="mb-4">
-                    <flux:input icon="magnifying-glass" class="inline md:hidden" wire:model.live.debounce.300ms="search" placeholder="Cari santri" />
+                    <flux:input icon="magnifying-glass" class="inline md:hidden" wire:model.live.debounce.300ms="search" placeholder="Cari santri" autocomplete="off" />
                 </div>
                 <div class="relative overflow-x-auto hidden lg:block">
                     <table class="w-full text-sm text-left rtl:text-right text-zinc-500 dark:text-zinc-400">
@@ -82,13 +101,13 @@
                                             <flux:badge color="green">Datang tepat waktu</flux:badge>
                                         @else
                                             <flux:badge color="orange">
-                                                Datang telat ({{ intval($permit->arrive_on->diffInDays($permit->back_on)) }} hari)
+                                                Datang telat ({{ (intval($permit->back_on->diffInDays($permit->arrive_on))) + 1 }} hari)
                                             </flux:badge>
                                         @endif
                                     @else
                                         @if ($permit->back_on <= now())
                                             <flux:badge color="red">
-                                                Belum datang (telat {{ intval($permit->back_on->diffInDays(now())) }} hari)
+                                                Belum datang (telat {{ (intval($permit->back_on->diffInDays(now()))) + 1 }} hari)
                                             </flux:badge>
                                         @else
                                             <flux:badge color="zinc">Belum datang</flux:badge>
@@ -100,7 +119,7 @@
                                         Edit
                                     </a> --}}
                                     {{-- <a href="{{ route('permits.edit', $permit->id) }}">     
-                                        <flux:button variant="primary">Edit</flux:button>
+                                        <flux:button variant="primary">Edit</flux:button>z
                                     </a> --}}
                                     {{-- <flux:modal.trigger name="delete-profile">
                                         <flux:button variant="danger" wire:click="deleteSelected({{ $permit->id }})">Hapus</flux:button>
@@ -134,19 +153,24 @@
                                 <div class="text-sm">{{ $permit->leave_on->format('d-F') }} -> {{ ($permit->back_on) ? $permit->back_on->format('d-F') : '-' }}</div>
                             </div>
                             <div class="grow-1">
-                                <div class="flex justify-end items-end">
+                                @if ($permit->extended_count > 0)
+                                <div class="flex justify-end mb-1">
+                                    <flux:badge size="sm" color="blue">Diperpanjang {{ $permit->extended_count }} kali</flux:badge>
+                                </div>
+                                @endif
+                                <div class="flex justify-end">
                                     @if ($permit->arrive_on)
                                         @if ($permit->arrive_on <= $permit->back_on)
                                             <flux:badge size="sm" color="green">Datang tepat waktu</flux:badge>
                                         @else
                                             <flux:badge size="sm" color="orange">
-                                                Datang telat ({{ intval($permit->arrive_on->diffInDays($permit->back_on)) }} hari)
+                                                Datang telat ({{ (intval($permit->back_on->diffInDays($permit->arrive_on)) + 1) }} hari)
                                             </flux:badge>
                                         @endif
                                     @else
                                         @if ($permit->back_on <= now())
                                             <flux:badge size="sm" color="red">
-                                                Belum datang (telat {{ intval($permit->back_on->diffInDays(now())) }} hari)
+                                                Belum datang (telat {{ (intval($permit->back_on->diffInDays(now())) + 1) }} hari)
                                             </flux:badge>
                                         @else
                                             <flux:badge size="sm" color="zinc">Belum datang</flux:badge>

@@ -14,8 +14,10 @@
             <flux:navlist variant="outline">
                 <flux:navlist.group :heading="__('Platform')" class="grid">
                     <flux:navlist.item icon="home" :href="route('dashboard')" :current="request()->routeIs('dashboard')" wire:navigate>{{ __('Dashboard') }}</flux:navlist.item>
+                    @if (auth()->user()->role->name == "admin" || auth()->user()->role->name == "sekretaris")                      
                     <flux:navlist.item icon="user" :href="route('users')" :current="request()->routeIs('users')" wire:navigate>{{ __('User') }}</flux:navlist.item>
                     <flux:navlist.item icon="user" :href="route('roles')" :current="request()->routeIs('role')" wire:navigate>{{ __('Roles') }}</flux:navlist.item>
+                    @endif
                 </flux:navlist.group>
                 <flux:navlist.group :heading="__('Data Utama')" class="grid">
                     <flux:navlist.item icon="users" :href="route('students')" :current="request()->routeIs('students')" wire:navigate>{{ __('Santri') }}</flux:navlist.item>
@@ -25,12 +27,13 @@
                 </flux:navlist.group>
                 <flux:navlist.group :heading="__('Perizinan')" class="grid">
                     <flux:navlist.item icon="document-plus" :href="route('permits.form')" :current="request()->routeIs('permits.form')" wire:navigate>{{ __('Perizinan') }}</flux:navlist.item>
-                    <flux:navlist.item icon="document-text" :href="route('permits')" :current="request()->routeIs('permits')" wire:navigate>{{ __('Daftar Perizinan') }}</flux:navlist.item>
+                    <flux:navlist.item icon="document-text" :href="route('permits', ['status' => 'active'])" :current="request()->routeIs('permits')" wire:navigate>{{ __('Daftar Perizinan') }}</flux:navlist.item>
                 </flux:navlist.group>
             </flux:navlist>
 
             <flux:spacer />
 
+            @if (auth()->user()->role->name == "admin")  
             <flux:navlist variant="outline">
                 <flux:navlist.item icon="folder-git-2" href="https://github.com/laravel/livewire-starter-kit" target="_blank">
                 {{ __('Repository') }}
@@ -40,6 +43,7 @@
                 {{ __('Documentation') }}
                 </flux:navlist.item>
             </flux:navlist>
+            @endif
 
             <!-- Desktop User Menu -->
             <flux:dropdown position="bottom" align="start">

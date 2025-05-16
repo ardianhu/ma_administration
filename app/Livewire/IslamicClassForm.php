@@ -9,11 +9,13 @@ class IslamicClassForm extends Component
 {
     public $islamicClass;
     public $name;
-    public $iteration;
+    public $class;
+    public $sub_class;
 
     protected $rules = [
         'name' => 'required|string|max:255',
-        'iteration' => 'required|string|max:255',
+        'class' => 'required|string|max:255',
+        'sub_class' => 'required|string|max:255',
     ];
 
     public function mount($islamicClass = null)
@@ -21,7 +23,8 @@ class IslamicClassForm extends Component
         if ($islamicClass) {
             $this->islamicClass = IslamicClass::findOrFail($islamicClass);
             $this->name = $this->islamicClass->name;
-            $this->iteration = $this->islamicClass->iteration;
+            $this->class = $this->islamicClass->class;
+            $this->sub_class = $this->islamicClass->sub_class;
         }
     }
 
@@ -35,7 +38,8 @@ class IslamicClassForm extends Component
         }
 
         $this->islamicClass->name = $this->name;
-        $this->islamicClass->iteration = $this->iteration;
+        $this->islamicClass->class = $this->class;
+        $this->islamicClass->sub_class = $this->sub_class;
         $this->islamicClass->save();
 
         session()->flash('message', $isNew ? 'Kelas berhasil dibuat.' : 'Kelas berhasil diupdate.');

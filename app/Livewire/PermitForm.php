@@ -56,6 +56,12 @@ class PermitForm extends Component
             } else {
                 $this->permit_type = '';
             }
+            // $student = Student
+            if (request()->has('student')) {
+                $student = request()->get('student');
+                $this->selectedStudent = Student::findOrFail($student);
+                $this->student_id = $this->selectedStudent->id;
+            }
         }
         // dd($this->permit_type);
     }
@@ -99,7 +105,11 @@ class PermitForm extends Component
 
     public function render()
     {
-        $students = Student::where('name', 'like', '%' . $this->search . '%')
+        $students = Student::whereNull('drop_date')
+            ->where(function ($query) {
+                $query->where('name', 'like', '%' . $this->search . '%')
+                    ->orWhere('nis', 'like', '%' . $this->search . '%');
+            })
             ->orderBy('name', 'asc')
             ->get();
         return view('livewire.permit-form', [

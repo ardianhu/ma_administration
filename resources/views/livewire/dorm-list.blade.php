@@ -30,6 +30,9 @@
                                     Kapasitas
                                 </th>
                                 <th scope="col" class="px-6 py-3">
+                                    Kawasan
+                                </th>
+                                <th scope="col" class="px-6 py-3">
                                     Aksi
                                 </th>
                             </tr>
@@ -43,6 +46,9 @@
                                 <th scope="row" class="px-6 py-4 font-medium text-zinc-900 whitespace-nowrap dark:text-white">
                                     {{ $dorm->capacity }}
                                 </th>
+                                <th scope="row" class="px-6 py-4 font-medium text-zinc-900 whitespace-nowrap dark:text-white">
+                                    {{ $dorm->zone }}
+                                </th>
                                 <td class="px-6 py-4">
                                     {{-- <a href="{{ route('users.edit', $user->id) }}" class="bg-zinc-500 hover:bg-zinc-700 text-white font-bold py-2 px-4 rounded">
                                         Edit
@@ -53,7 +59,7 @@
                                     <a href="{{ route('dorms.member', $dorm->id) }}">     
                                         <flux:button variant="filled" icon="eye" />
                                     </a>
-                                    <flux:modal.trigger name="delete-profile">
+                                    <flux:modal.trigger name="delete-dorm">
                                         <flux:button variant="danger" icon="trash" wire:click="deleteSelected({{ $dorm->id }})"/>
                                     </flux:modal.trigger>
                                     {{-- <flux:button variant="primary" wire:click="deleteUser({{ $user->id }})" variant="danger">Hapus</flux:button> --}}
@@ -70,12 +76,13 @@
             {{-- content end here --}}
         </div>
     </div>
-    <flux:modal name="delete-profile" class="min-w-[22rem]">
+    <flux:modal name="delete-dorm" class="min-w-[22rem]">
         <div class="space-y-6">
             <div>
                 <flux:heading size="lg">Hapus asrama?</flux:heading>
                 <flux:text class="mt-2">
                     <p>Data asrama ini akan dihapus dari sistem.</p>
+                    <p>Dan santri di asrama ini akan dikeluarkan dari asrama.</p>
                     <p>Aksi ini berdamapak permanen dan tidak bisa dikembalikan.</p>
                 </flux:text>
             </div>

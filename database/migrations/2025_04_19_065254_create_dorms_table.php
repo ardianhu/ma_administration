@@ -16,6 +16,7 @@ return new class extends Migration
             $table->char('block');
             $table->integer('room_number');
             $table->integer('capacity');
+            $table->enum('zone', ['putra', 'putri']);
             $table->timestamps();
         });
     }

@@ -8,7 +8,7 @@
             {{-- content start here --}}
             <div>
                 <div class="mb-4">
-                    <flux:input icon="magnifying-glass" class="inline" wire:model.live.debounce.300ms="search" placeholder="Cari santri" />
+                    <flux:input icon="magnifying-glass" class="inline" wire:model.live.debounce.300ms="search" placeholder="Cari santri" autocomplete="off"/>
                 </div>
                 <div class="mb-4">
                     <flux:navlist class="">
@@ -33,7 +33,7 @@
                                     <div>Ttl. : <span>{{ ($selectedStudent->dob) ? $selectedStudent->dob : '-' }}</span></div>
                                     <div>Jenis Kelamin : <span>{{ $selectedStudent->gender }}</span></div>
                                     <div>Kamar: <span>{{ ($selectedStudent->dorm ? $selectedStudent->dorm->block .' - '. $selectedStudent->dorm->room_number : '-') }}</span></div>
-                                    <div>Kelas: <span>{{ ($selectedStudent->islamicClass) ? $selectedStudent->islamicClass->name .' - '. $selectedStudent->islamicClass->iteration : '-' }}</span></div>
+                                    <div>Kelas: <span>{{ ($selectedStudent->islamicClass) ? $selectedStudent->islamicClass->name .' - '. $selectedStudent->islamicClass->class : '-' }}</span></div>
                                     <div>Nama Ayah : <span>{{ ($selectedStudent->father_name) ? $selectedStudent->father_name : '-' }}</span></div>
                                     <div>Nama Ibu: <span>{{ ($selectedStudent->mother_name) ? $selectedStudent->mother_name : '-' }}</span></div>
                                     <div>Nama Wali: <span>{{ ($selectedStudent->guardian_name) ? $selectedStudent->guardian_name : '-' }}</span></div>

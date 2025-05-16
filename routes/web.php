@@ -5,7 +5,7 @@ use App\Livewire\Settings\Password;
 use App\Livewire\Settings\Profile;
 use Illuminate\Support\Facades\Route;
 
-Route::get('/', function () {
+Route::get('/dashboard', function () {
     return view('welcome');
 })->name('home');
 
@@ -71,7 +71,7 @@ Route::get('/datepicker', function () {
 Route::middleware(['auth'])->group(function () {
     Route::redirect('settings', 'settings/profile');
 
-    Route::get('dashboard', \App\Livewire\Dashboard::class)->name('dashboard');
+    Route::get('/', \App\Livewire\Dashboard::class)->name('dashboard');
 
     Route::get('settings/profile', Profile::class)->name('settings.profile');
     Route::get('settings/password', Password::class)->name('settings.password');
@@ -93,10 +93,12 @@ Route::middleware(['auth'])->group(function () {
     Route::get('class', \App\Livewire\IslamicClassList::class)->name('class');
     Route::get('class/form', \App\Livewire\IslamicClassForm::class)->name('class.form');
     Route::get('class/edit/{islamicClass}', \App\Livewire\IslamicClassForm::class)->name('class.edit');
+    Route::get('class/member/{islamic_class}', \App\Livewire\IslamicClassMember::class)->name('class.member');
 
     Route::get('students', \App\Livewire\StudentList::class)->name('students');
     Route::get('students/form', \App\Livewire\StudentForm::class)->name('students.form');
     Route::get('students/edit/{student}', \App\Livewire\StudentForm::class)->name('students.edit');
+    Route::get('students/detail/{student}', \App\Livewire\StudentDetail::class)->name('students.detail');
 
     Route::get('academic-years', \App\Livewire\AcademicYearList::class)->name('academic-years');
     Route::get('academic-years/form', \App\Livewire\AcademicYearForm::class)->name('academic-years.form');

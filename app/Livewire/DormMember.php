@@ -70,9 +70,20 @@ class DormMember extends Component
 
     public function render()
     {
-        $students = Student::where('name', 'like', '%' . $this->search . '%')
-            ->orderBy('name', 'asc')
-            ->get();
+        if ($this->dorm->zone == 'putra') {
+            $students = Student::where('name', 'like', '%' . $this->search . '%')
+                ->where('gender', 'L')
+                ->whereNull('drop_date')
+                ->orderBy('name', 'asc')
+                ->get();
+        }
+        if ($this->dorm->zone == 'putri') {
+            $students = Student::where('name', 'like', '%' . $this->search . '%')
+                ->where('gender', 'P')
+                ->whereNull('drop_date')
+                ->orderBy('name', 'asc')
+                ->get();
+        }
         $this->updateDormMembers();
         return view('livewire.dorm-member', [
             'students' => $students,

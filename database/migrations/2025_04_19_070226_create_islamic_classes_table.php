@@ -14,7 +14,8 @@ return new class extends Migration
         Schema::create('islamic_classes', function (Blueprint $table) {
             $table->id();
             $table->string('name');
-            $table->string('iteration');
+            $table->string('class');
+            $table->string('sub_class');
             $table->timestamps();
         });
     }

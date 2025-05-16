@@ -20,12 +20,12 @@ class IslamicClassList extends Component
 
     public function render()
     {
-        $islamicClasses = IslamicClass::where('name', 'like', '%' . $this->search . '%')
-            ->orWhere('iteration', 'like', '%' . $this->search . '%')
+        $islamic_classes = IslamicClass::where('name', 'like', '%' . $this->search . '%')
+            ->orWhere('class', 'like', '%' . $this->search . '%')
             ->orderBy('name', 'asc')
             ->paginate(10);
         return view('livewire.islamic-class-list', [
-            'islamicClasses' => $islamicClasses,
+            'islamic_classes' => $islamic_classes,
         ]);
     }
 
@@ -36,9 +36,9 @@ class IslamicClassList extends Component
 
     public function deleteIslamicClass()
     {
-        $islamicClass = IslamicClass::find($this->selected);
-        if ($islamicClass) {
-            $islamicClass->delete();
+        $islamic_class = IslamicClass::find($this->selected);
+        if ($islamic_class) {
+            $islamic_class->delete();
             $this->selected = 0;
             session()->flash('message', 'Kelas berhasil dihapus.');
             return redirect()->route('class');

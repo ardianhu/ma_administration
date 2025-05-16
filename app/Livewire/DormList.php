@@ -37,6 +37,11 @@ class DormList extends Component
     {
         $dorm = Dorm::find($this->selected);
         if ($dorm) {
+            $students = $dorm->students()->get();
+            foreach ($students as $student) {
+                $student->dorm_id = null;
+                $student->save();
+            }
             $dorm->delete();
             $this->selected = 0;
             session()->flash('message', 'Asrama berhasil dihapus.');

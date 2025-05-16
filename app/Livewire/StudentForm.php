@@ -2,10 +2,13 @@
 
 namespace App\Livewire;
 
+use App\Models\AcademicYear;
 use App\Models\Dorm;
 use App\Models\IslamicClass;
+use App\Models\Permit;
 use App\Models\Student;
 use Carbon\Carbon;
+use Carbon\CarbonPeriod;
 use Livewire\Component;
 
 class StudentForm extends Component
@@ -131,9 +134,20 @@ class StudentForm extends Component
 
     public function save()
     {
-        // dd($this->dorm_id);
         $this->validate();
         $isNew = !$this->student;
+
+        if ($this->dorm_id) {
+            $dorm = Dorm::find($this->dorm_id);
+            if ($this->gender === 'L' && $dorm->zone !== 'putra') {
+                $this->addError('dorm_id', 'Santri laki-laki harus memilih asrama putra.');
+                return; // Prevent further execution
+            }
+            if ($this->gender === 'P' && $dorm->zone !== 'putri') {
+                $this->addError('dorm_id', 'Santri perempuan harus memilih asrama putri.');
+                return; // Prevent further execution
+            }
+        }
 
         if ($isNew) {
             $this->student = new Student();

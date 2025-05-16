@@ -10,11 +10,19 @@ class Dashboard extends Component
     public $studentsCount;
     public $maleStudentsCount;
     public $femaleStudentsCount;
+
     public function render()
     {
-        $this->studentsCount = Student::where('drop_date', null)->count();
-        $this->maleStudentsCount = Student::where('gender', 'L')->where('drop_date', null)->count();
-        $this->femaleStudentsCount = Student::where('gender', 'P')->where('drop_date', null)->count();
+        $counts = Student::selectRaw("
+            COUNT(*) as total,
+            SUM(CASE WHEN gender = 'L' THEN 1 ELSE 0 END) as male,
+            SUM(CASE WHEN gender = 'P' THEN 1 ELSE 0 END) as female
+        ")->whereNull('drop_date')->first();
+
+        $this->studentsCount = $counts->total;
+        $this->maleStudentsCount = $counts->male;
+        $this->femaleStudentsCount = $counts->female;
+
         return view('livewire.dashboard');
     }
 }

@@ -9,7 +9,8 @@ class IslamicClass extends Model
     //
     protected $fillable = [
         'name',
-        'iteration',
+        'class',
+        'sub_class',
     ];
     public function students()
     {

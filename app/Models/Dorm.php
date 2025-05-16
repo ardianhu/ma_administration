@@ -11,6 +11,7 @@ class Dorm extends Model
         'block',
         'room_number',
         'capacity',
+        'zone'
     ];
 
     public function students()

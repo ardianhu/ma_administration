@@ -164,15 +164,15 @@
                         <div>
                             <flux:select wire:model="dorm_id" :label="__('Kamar')" placeholder="Pilih kamar...">
                                 @foreach ($dorms as $dorm)
-                                    <flux:select.option value="{{ $dorm->id }}">{{ $dorm->block }} - {{ $dorm->room_number }}</flux:select.option>
+                                    <flux:select.option value="{{ $dorm->id }}">{{ $dorm->block }} - {{ $dorm->room_number }} ({{ $dorm->zone }})</flux:select.option>
                                 @endforeach
                             </flux:select>
-                            @error('dorm_id') <span class="text-red-500">{{ $message }}</span> @enderror
+                            {{-- @error('dorm_id') <span class="text-red-500">{{ $message }}</span> @enderror --}}
                         </div>
                         <div>
                             <flux:select wire:model="islamic_class_id" :label="__('Kelas')" placeholder="Pilih kelas..." nullable>
                                 @foreach ($islamicClasses as $islamicClass)
-                                    <flux:select.option value="{{ $islamicClass->id }}">{{ $islamicClass->name }} - {{ $islamicClass->iteration }}</flux:select.option>
+                                    <flux:select.option value="{{ $islamicClass->id }}">{{ $islamicClass->name }} - {{ $islamicClass->class }}</flux:select.option>
                                 @endforeach
                             </flux:select>
                             @error('islamic_class_id') <span class="text-red-500">{{ $message }}</span> @enderror

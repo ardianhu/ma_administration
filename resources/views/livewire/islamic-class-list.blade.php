@@ -32,17 +32,20 @@
                             </tr>
                         </thead>
                         <tbody>
-                            @foreach($islamicClasses as $islamicClass)
+                            @foreach($islamic_classes as $islamic_class)
                             <tr class="bg-white border-b dark:bg-zinc-800 dark:border-zinc-700 border-zinc-200">
                                 <th scope="row" class="px-6 py-4 font-medium text-zinc-900 whitespace-nowrap dark:text-white">
-                                    {{ $islamicClass->name }} - {{ $islamicClass->iteration }}
+                                    {{ $islamic_class->name }} - {{ $islamic_class->class }}<sup class="">{{ $islamic_class->sub_class }}</sup>
                                 </th>
                                 <td class="px-6 py-4">
-                                    <a href="{{ route('class.edit', $islamicClass->id) }}">     
-                                        <flux:button variant="primary">Edit</flux:button>
+                                    <a href="{{ route('class.edit', $islamic_class->id) }}">
+                                        <flux:button icon="pencil" variant="primary" />
+                                    </a>
+                                    <a href="{{ route('class.member', $islamic_class->id) }}">
+                                        <flux:button icon="eye" variant="filled" />
                                     </a>
                                     <flux:modal.trigger name="delete-profile">
-                                        <flux:button variant="danger" wire:click="deleteSelected({{ $islamicClass->id }})">Hapus</flux:button>
+                                        <flux:button icon="trash" variant="danger" wire:click="deleteSelected({{ $islamic_class->id }})" />
                                     </flux:modal.trigger>
                 
                                 </td>
@@ -52,7 +55,7 @@
                     </table>
                     
                 </div>
-                <div class="mt-4">{{ $islamicClasses->links() }}</div>
+                <div class="mt-4">{{ $islamic_classes->links() }}</div>
             </div>
             {{-- content end here --}}
         </div>
@@ -71,7 +74,7 @@
                 <flux:modal.close>
                     <flux:button variant="ghost">Batal</flux:button>
                 </flux:modal.close>
-                <flux:button type="submit" variant="danger" wire:click="deleteIslamicClass()">Hapus</flux:button>
+                <flux:button type="submit" variant="danger" wire:click="deleteislamic_class()">Hapus</flux:button>
             </div>
         </div>
     </flux:modal>

@@ -19,7 +19,7 @@
                 <div class="mb-4">
                     <flux:input icon="magnifying-glass" class="inline md:hidden" wire:model.live.debounce.300ms="search" placeholder="Cari santri" />
                 </div>
-                <div class="relative overflow-x-auto">
+                <div class="relative overflow-x-auto hidden lg:block">
                     <table class="w-full text-sm text-left rtl:text-right text-zinc-500 dark:text-zinc-400">
                         <thead class="text-xs text-zinc-700 uppercase bg-zinc-50 dark:bg-zinc-700 dark:text-zinc-400">
                             <tr>
@@ -30,7 +30,10 @@
                                     Alamat
                                 </th>
                                 <th scope="col" class="px-6 py-3">
-                                    Tempat Tanggal Lahir
+                                    Kamar
+                                </th>
+                                <th scope="col" class="px-6 py-3">
+                                    Kelas
                                 </th>
                                 <th scope="col" class="px-6 py-3">
                                     Aksi
@@ -47,11 +50,14 @@
                                     {{ $student->address }}
                                 </th>
                                 <th scope="row" class="px-6 py-4 font-medium text-zinc-900 whitespace-nowrap dark:text-white">
-                                    {{ $student->dob }}
+                                    {{ ($student->dorm) ? $student->dorm->block : '' }}-{{ ($student->dorm) ? $student->dorm->room_number : '' }}
+                                </th>
+                                <th scope="row" class="px-6 py-4 font-medium text-zinc-900 whitespace-nowrap dark:text-white">
+                                    {{ ($student->islamicClass) ? $student->islamicClass->name : '' }}-{{ ($student->islamicClass) ? $student->islamicClass->class : '' }}<sup>{{ ($student->islamicClass) ? $student->islamicClass->sub_class : '' }}</sup>
                                 </th>
                                 <td class="px-6 py-4">
-                                    <a href="{{ route('students.edit', $student->id) }}">     
-                                        <flux:button variant="primary">Edit</flux:button>
+                                    <a href="{{ route('students.detail', $student->id) }}">     
+                                        <flux:button icon="eye" variant="primary" />
                                     </a>
                 
                                 </td>
@@ -60,6 +66,34 @@
                         </tbody>
                     </table>
                     
+                </div>
+                <div class="space-y-6 lg:hidden">
+                    @foreach ($students as $student)
+                    <a href="{{ route('students.detail', $student->id) }}">
+                    <div class="p-4 lg:p-8 h-full border border-solid border-zinc-200 dark:border-zinc-700 rounded-xl space-y-4 mb-2">
+                        <div class="flex justify-center items-center">
+                            <div class="grow-2">
+                                <div class="font-bold text-xl">{{ $student->name }}</div>
+                                <div class="">{{ $student->address  }}</div>
+                                <div class="text-sm">Kamar {{ ($student->dorm) ? $student->dorm->block .'-'. $student->dorm->room_number : '-' }} | Kelas {{ ($student->islamicClass) ? $student->islamicClass->name .'-'. $student->islamicClass->class : '-'  }}</div>
+                            </div>
+                            <div class="grow-1">
+                                <div class="flex justify-end items-end">
+                                    @if ($student->status == 'no_permit')
+                                        <flux:badge size="sm" color="green">Di pondok</flux:badge>
+                                    @endif
+                                    @if ($student->status == 'have_permit')
+                                        <flux:badge size="sm" color="orange">Izin</flux:badge>
+                                    @endif
+                                    @if ($student->status == 'late')
+                                        <flux:badge size="sm" color="red">Telat</flux:badge>
+                                    @endif
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    </a>
+                    @endforeach
                 </div>
                 <div class="mt-4">{{ $students->links() }}</div>
             </div>
