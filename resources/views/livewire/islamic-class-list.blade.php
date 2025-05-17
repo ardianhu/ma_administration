@@ -11,9 +11,11 @@
                     <h2 class="text-lg flex-1 font-semibold text-gray-900 dark:text-white">Daftar Kelas</h2>
                     <div class="flex items-center justify-end flex-1 gap-2">
                         <flux:input icon="magnifying-glass" class="hidden md:inline" wire:model.live.debounce.300ms="search" placeholder="Cari kelas" />
+                        @if (auth()->user()->role->name == 'admin' || auth()->user()->role->name == 'sekretaris' || auth()->user()->role->name == 'pendidikan')
                         <a href={{ route('class.form') }}>
                             <flux:button variant="primary">Tambah Kelas</flux:button>
                         </a>
+                        @endif
                     </div>
                 </div>
                 <div class="mb-4">
@@ -38,16 +40,17 @@
                                     {{ $islamic_class->name }} - {{ $islamic_class->class }}<sup class="">{{ $islamic_class->sub_class }}</sup>
                                 </th>
                                 <td class="px-6 py-4">
-                                    <a href="{{ route('class.edit', $islamic_class->id) }}">
-                                        <flux:button icon="pencil" variant="primary" />
-                                    </a>
                                     <a href="{{ route('class.member', $islamic_class->id) }}">
                                         <flux:button icon="eye" variant="filled" />
+                                    </a>
+                                    @if (auth()->user()->role->name == 'admin' || auth()->user()->role->name == 'sekretaris' || auth()->user()->role->name == 'pendidikan')
+                                    <a href="{{ route('class.edit', $islamic_class->id) }}">
+                                        <flux:button icon="pencil" variant="primary" />
                                     </a>
                                     <flux:modal.trigger name="delete-profile">
                                         <flux:button icon="trash" variant="danger" wire:click="deleteSelected({{ $islamic_class->id }})" />
                                     </flux:modal.trigger>
-                
+                                    @endif
                                 </td>
                             </tr>
                             @endforeach

@@ -18,14 +18,19 @@
                             </div>
                         </div>
                         <div class="p-4 lg:p-8 lg:h-full border border-solid border-zinc-200 dark:border-zinc-700 rounded-lg space-y-4">
-                            <div class="font-bold text-xl">Daftar anggota kamar</div>
+                            <div class="flex items-center justify-between">
+                                <div class="font-bold text-xl">Daftar anggota kamar</div>
+                                <flux:button variant="primary" size="sm" icon="folder-arrow-down" wire:click="exportMembers()" />
+                            </div>
                             <div class="space-y-2">
                                 @foreach ($dorm_members as $dorm_member)
                                 <div class="flex items-center justify-between">
                                     <div class="">{{ $dorm_member->name }}</div>
+                                    @if (auth()->user()->role->name == 'admin' || auth()->user()->role->name == 'sekretaris')
                                     <flux:modal.trigger name="remove_member">
                                         <flux:button variant="danger" size="sm" icon="trash" wire:click="updateSelected({{ $dorm_member->id }})" />
                                     </flux:modal.trigger>
+                                    @endif
                                 </div>
                                 @endforeach
                             </div>
@@ -44,9 +49,11 @@
                             <div class="flex items-center justify-between">
                                 <div class="">{{ $student->name }} {{ ($student->dorm) ? $student->dorm->block : '' }}-{{ ($student->dorm) ? $student->dorm->room_number : '' }}</div>
                                 @if ($student->dorm_id != $dorm->id)
+                                @if (auth()->user()->role->name == 'admin' || auth()->user()->role->name == 'sekretaris')
                                 <flux:modal.trigger name="add_member">
                                     <flux:button variant="primary" size="sm" icon="plus" wire:click="updateSelected({{ $student->id }})" />
                                 </flux:modal.trigger>
+                                @endif
                                 @endif
                             </div>
                             @endforeach

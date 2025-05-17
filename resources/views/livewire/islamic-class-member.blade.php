@@ -16,14 +16,20 @@
                             </div>
                         </div>
                         <div class="p-4 lg:p-8 lg:h-full border border-solid border-zinc-200 dark:border-zinc-700 rounded-lg space-y-4">
-                            <div class="font-bold text-xl">Daftar murid</div>
+                            <div class="flex items-center justify-between">
+                                <div class="font-bold text-xl">Daftar murid</div>
+                                
+                                <flux:button variant="primary" size="sm" icon="folder-arrow-down" wire:click="exportMembers()" />
+                            </div>
                             <div class="space-y-2">
                                 @foreach ($islamic_class_members as $islamic_class_member)
                                 <div class="flex items-center justify-between">
                                     <div class="">{{ $islamic_class_member->name }}</div>
+                                    @if (auth()->user()->role->name == 'admin' || auth()->user()->role->name == 'sekretaris' || auth()->user()->role->name == 'pendidikan')
                                     <flux:modal.trigger name="remove_member">
                                         <flux:button variant="danger" size="sm" icon="trash" wire:click="updateSelected({{ $islamic_class_member->id }})" />
                                     </flux:modal.trigger>
+                                    @endif
                                 </div>
                                 @endforeach
                             </div>
@@ -42,9 +48,11 @@
                             <div class="flex items-center justify-between">
                                 <div class="">{{ $student->name }} {{ ($student->islamicClass) ? $student->islamicClass->name : '' }}-{{ ($student->islamicClass) ? $student->islamicClass->class : '' }}<sup>{{ ($student->islamicClass) ? $student->islamicClass->sub_class : '' }}</sup></div>
                                 @if ($student->islamic_class_id != $islamic_class->id)
+                                @if (auth()->user()->role->name == 'admin' || auth()->user()->role->name == 'sekretaris' || auth()->user()->role->name == 'pendidikan')
                                 <flux:modal.trigger name="add_member">
                                     <flux:button variant="primary" size="sm" icon="plus" wire:click="updateSelected({{ $student->id }})" />
                                 </flux:modal.trigger>
+                                @endif
                                 @endif
                             </div>
                             @endforeach

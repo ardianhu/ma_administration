@@ -23,10 +23,14 @@
                     <flux:navlist.item icon="users" :href="route('students')" :current="request()->routeIs('students')" wire:navigate>{{ __('Santri') }}</flux:navlist.item>
                     <flux:navlist.item icon="building-office" :href="route('dorms')" :current="request()->routeIs('dorms')" wire:navigate>{{ __('Asrama') }}</flux:navlist.item>
                     <flux:navlist.item icon="building-office-2" :href="route('class')" :current="request()->routeIs('class')" wire:navigate>{{ __('Kelas') }}</flux:navlist.item>
+                    @if (auth()->user()->role->name == 'admin' || auth()->user()->role->name == 'sekretaris')
                     <flux:navlist.item icon="calendar" :href="route('academic-years')" :current="request()->routeIs('academic-years')" wire:navigate>{{ __('Tahun Ajar') }}</flux:navlist.item>
+                    @endif
                 </flux:navlist.group>
                 <flux:navlist.group :heading="__('Perizinan')" class="grid">
+                    @if (auth()->user()->role->name == 'admin' || auth()->user()->role->name == 'keamanan' || auth()->user()->role->name == 'kesehatan')
                     <flux:navlist.item icon="document-plus" :href="route('permits.form')" :current="request()->routeIs('permits.form')" wire:navigate>{{ __('Perizinan') }}</flux:navlist.item>
+                    @endif
                     <flux:navlist.item icon="document-text" :href="route('permits', ['status' => 'active'])" :current="request()->routeIs('permits')" wire:navigate>{{ __('Daftar Perizinan') }}</flux:navlist.item>
                 </flux:navlist.group>
             </flux:navlist>

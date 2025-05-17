@@ -29,10 +29,15 @@
                                 <flux:menu.item href="{{ route('permits', ['status' => 'late']) }}">Lambat</flux:menu.item>
                             </flux:menu>
                         </flux:dropdown>
+                        <flux:modal.trigger name="download-permit">
+                            <flux:button icon="folder-arrow-down">Download</flux:button>
+                        </flux:modal.trigger>
                         <flux:input icon="magnifying-glass" class="hidden md:inline" wire:model.live.debounce.300ms="search" placeholder="Cari santri" autocomplete="off" />
+                        @if (auth()->user()->role->name == 'admin' || auth()->user()->role->name == 'keamanan' || auth()->user()->role->name == 'kesehatan')
                         <a href={{ route('permits.form') }}>
                             <flux:button variant="primary">Buat Izin</flux:button>
                         </a>
+                        @endif
                     </div>
                 </div>
                 <div class="mb-4">
@@ -125,12 +130,18 @@
                                         <flux:button variant="danger" wire:click="deleteSelected({{ $permit->id }})">Hapus</flux:button>
                                     </flux:modal.trigger> --}}
                                     @if (!$permit->arrive_on)
+                                    @if (
+                                        (auth()->user()->role->name == 'admin') ||
+                                        (auth()->user()->role->name == 'keamanan' && $permit->permit_type == 'kepentingan') ||
+                                        (auth()->user()->role->name == 'kesehatan' && $permit->permit_type == 'sakit')
+                                    )
                                     <flux:modal.trigger name="confirm_arrival">
                                         <flux:button icon="check" variant="primary" wire:click="permitSelected({{ $permit->id }})" />
                                     </flux:modal.trigger>
                                     <flux:modal.trigger name="extend_permit">
                                         <flux:button icon="plus" variant="filled" wire:click="permitSelected({{ $permit->id }})" />
                                     </flux:modal.trigger>
+                                    @endif
                                     @endif
                                     {{-- <flux:button variant="primary" wire:click="deleteUser({{ $user->id }})" variant="danger">Hapus</flux:button> --}}
                 
@@ -239,6 +250,22 @@
         </div>
     </flux:modal>
 
+    <flux:modal name="download-permit" class="md:w-96">
+        <div class="space-y-6">
+            <div>
+                <flux:heading size="lg">Download rekap izin</flux:heading>
+                <flux:text class="mt-2">file akan didownload dalam format excel.</flux:text>
+            </div>
+            <flux:input wire:model="exportStartDate" label="Mulai tanggal" type="date" />
+            <flux:input wire:model="exportEndDate" label="Sampai tanggal" type="date" />
+            <div class="flex">
+                <flux:spacer />
+                <flux:button type="submit" variant="primary" wire:click="downloadPermit()">Download</flux:button>
+            </div>
+        </div>
+    </flux:modal>
+
+    @if (auth()->user()->role->name == 'admin' || auth()->user()->role->name == 'keamanan' || auth()->user()->role->name == 'kesehatan')
     <flux:modal name="mobile_modal" class="w-96 md:w-96">
         <div class="space-y-6">
             <div>
@@ -257,4 +284,5 @@
             </div> --}}
         </div>
     </flux:modal>
+    @endif
 </section>

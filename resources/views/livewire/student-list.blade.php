@@ -11,9 +11,11 @@
                     <h2 class="text-lg flex-1 font-semibold text-gray-900 dark:text-white">Data Santri</h2>
                     <div class="flex items-center justify-end flex-1 gap-2">
                         <flux:input icon="magnifying-glass" class="hidden md:inline" wire:model.live.debounce.300ms="search" placeholder="Cari santri" />
+                        @if (auth()->user()->role->name == 'admin' || auth()->user()->role->name == 'sekretaris')
                         <a href={{ route('students.form') }}>
                             <flux:button variant="primary">Tambah Santri</flux:button>
                         </a>
+                        @endif
                     </div>
                 </div>
                 <div class="mb-4">

@@ -2,10 +2,12 @@
 
 namespace App\Livewire;
 
+use App\Exports\PermitExport;
 use App\Models\Permit;
 use Carbon\Carbon;
 use Livewire\Component;
 use Livewire\WithPagination;
+use Maatwebsite\Excel\Facades\Excel;
 
 class PermitList extends Component
 {
@@ -14,6 +16,9 @@ class PermitList extends Component
     public $search = '';
     public $selected = 0;
     public $extended_back_on;
+
+    public $exportStartDate;
+    public $exportEndDate;
 
     public function updatingSearch()
     {
@@ -97,5 +102,10 @@ class PermitList extends Component
         } else {
             session()->flash('error', 'Izin tidak ditemukan.');
         }
+    }
+
+    public function downloadPermit()
+    {
+        return Excel::download(new PermitExport($this->exportStartDate, $this->exportEndDate), 'rekap_izin.xlsx');
     }
 }

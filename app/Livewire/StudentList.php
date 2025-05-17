@@ -18,6 +18,10 @@ class StudentList extends Component
 
     public function render()
     {
+        if (request()->has('dashboard_search')) {
+            $this->search = request()->query('dashboard_search');
+        }
+
         $students = \App\Models\Student::with('permits')
             ->whereNull('drop_date')
             ->where(function ($query) {

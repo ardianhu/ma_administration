@@ -2,10 +2,12 @@
 
 namespace App\Livewire;
 
+use App\Exports\IslamicClassMembersExport;
 use App\Models\IslamicClass;
 use App\Models\Student;
 use Livewire\Component;
 use Livewire\WithPagination;
+use Maatwebsite\Excel\Facades\Excel;
 
 class IslamicClassMember extends Component
 {
@@ -66,6 +68,11 @@ class IslamicClassMember extends Component
         } else {
             session()->flash('error', 'Santri tidak ditemukan.');
         }
+    }
+
+    public function exportMembers()
+    {
+        return Excel::download(new IslamicClassMembersExport($this->islamic_class->id), 'anggota_kelas_' . $this->islamic_class->name . '-' . $this->islamic_class->class . '-' . $this->islamic_class->sub_class . '.xlsx');
     }
 
     public function render()

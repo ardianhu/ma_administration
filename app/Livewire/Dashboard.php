@@ -10,6 +10,7 @@ class Dashboard extends Component
     public $studentsCount;
     public $maleStudentsCount;
     public $femaleStudentsCount;
+    public $dashboard_search;
 
     public function render()
     {
@@ -24,5 +25,9 @@ class Dashboard extends Component
         $this->femaleStudentsCount = $counts->female;
 
         return view('livewire.dashboard');
+    }
+    public function dashboardSearch()
+    {
+        return redirect()->route('students', ['dashboard_search' => $this->dashboard_search]);
     }
 }

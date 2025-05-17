@@ -2,10 +2,12 @@
 
 namespace App\Livewire;
 
+use App\Exports\DormMembersExport;
 use App\Models\Dorm;
 use App\Models\Student;
 use Livewire\Component;
 use Livewire\WithPagination;
+use Maatwebsite\Excel\Facades\Excel;
 
 class DormMember extends Component
 {
@@ -66,6 +68,11 @@ class DormMember extends Component
         } else {
             session()->flash('error', 'Santri tidak ditemukan.');
         }
+    }
+
+    public function exportMembers()
+    {
+        return Excel::download(new DormMembersExport($this->dorm->id), 'anggota_asrama_' . $this->dorm->block . '-' . $this->dorm->room_number . '.xlsx');
     }
 
     public function render()

@@ -11,9 +11,11 @@
                     <h2 class="text-lg flex-1 font-semibold text-gray-900 dark:text-white">Daftar User</h2>
                     <div class="flex items-center justify-end flex-1 gap-2">
                         <flux:input icon="magnifying-glass" class="hidden md:inline" wire:model.live.debounce.300ms="search" placeholder="Cari asrama" />
+                        @if (auth()->user()->role->name == 'admin' || auth()->user()->role->name == 'sekretaris')
                         <a href={{ route('dorms.form') }}>
                             <flux:button variant="primary">Tambah Asrama</flux:button>
                         </a>
+                        @endif
                     </div>
                 </div>
                 <div class="mb-4">
@@ -53,15 +55,17 @@
                                     {{-- <a href="{{ route('users.edit', $user->id) }}" class="bg-zinc-500 hover:bg-zinc-700 text-white font-bold py-2 px-4 rounded">
                                         Edit
                                     </a> --}}
-                                    <a href="{{ route('dorms.edit', $dorm->id) }}">     
-                                        <flux:button variant="primary" icon="pencil" />
-                                    </a>
                                     <a href="{{ route('dorms.member', $dorm->id) }}">     
                                         <flux:button variant="filled" icon="eye" />
+                                    </a>
+                                    @if (auth()->user()->role->name == 'admin' || auth()->user()->role->name == 'sekretaris')
+                                    <a href="{{ route('dorms.edit', $dorm->id) }}">     
+                                        <flux:button variant="primary" icon="pencil" />
                                     </a>
                                     <flux:modal.trigger name="delete-dorm">
                                         <flux:button variant="danger" icon="trash" wire:click="deleteSelected({{ $dorm->id }})"/>
                                     </flux:modal.trigger>
+                                    @endif
                                     {{-- <flux:button variant="primary" wire:click="deleteUser({{ $user->id }})" variant="danger">Hapus</flux:button> --}}
                 
                                 </td>

@@ -23,8 +23,35 @@
             <div class="p-4 lg:p-8 h-full border border-solid border-zinc-200 dark:border-zinc-700 rounded-lg space-y-4 mt-4">
                 <div class="font-bold text-xl">Riwayat Izin</div>
                 @if ($student)
-                <div class="grid grid-flow-col grid-rows-7 gap-1 text-xs overflow-x-auto">
-                    @foreach($heatmap as $date => $status)
+                @php
+                    $previousMonth = null;
+                    $counter = 0;
+                @endphp
+                {{-- github like heatmap container --}}
+                <div class="overflow-x-auto">
+                {{-- Month labels --}}
+                <div class="grid grid-flow-col grid-rows-1 gap-1 text-xs">
+                    @foreach($heatmap->chunk(7) as $week)
+                        @php
+                            $weekStartDate = \Carbon\Carbon::parse($week->keys()->first());
+                            $currentMonth = $weekStartDate->format('M');
+                        @endphp
+                        <div class="w-2 lg:w-4 text-center">
+                            @if ($currentMonth !== $previousMonth)
+                                {{ $currentMonth }}
+                                @php $previousMonth = $currentMonth; @endphp
+                            @endif
+                        </div>
+                    @endforeach
+                </div>
+                {{-- Heatmap --}}
+                @php
+                    $dates = $heatmap->keys()->values();
+                    $values = $heatmap->values()->toArray();
+                @endphp
+                            
+                <div class="grid grid-flow-col grid-rows-7 gap-1 text-xs">
+                    @foreach($heatmap as $i => $status)
                         @php
                             $color = match($status) {
                                 'green' => 'bg-green-500',
@@ -32,10 +59,25 @@
                                 'red' => 'bg-red-500',
                                 default => 'bg-zinc-500',
                             };
+                        
+                            $prev = $values[$loop->index - 1] ?? null;
+                            $next = $values[$loop->index + 1] ?? null;
+                        
+                            $isStart = $status !== $prev;
+                            $isEnd = $status !== $next;
+                        
+                            $date = $dates[$loop->index];
+                            $day = \Carbon\Carbon::parse($date)->format('d');
+                            $showDay = $isStart || $isEnd;
                         @endphp
-                        <div class="{{ $color }} w-2 h-2 lg:w-4 lg:h-4 rounded-xs" title="{{ $date }}"></div>
+                
+                        <div class="{{ $color }} w-2 h-2 lg:w-4 lg:h-4 text-[6px] lg:text-xs text-center rounded-[1px] lg:rounded-xs" title="{{ $date }}">
+                            {{ $showDay ? $day : '' }}
+                        </div>
                     @endforeach
-                </div>               
+                </div>
+                </div>
+                {{-- End of heatmap container --}}            
                 @endif
                 <div class="flex items-center justify-start gap-2">
                     <div>
@@ -52,9 +94,12 @@
                     </div>
                 </div>
                 <div class="flex items-center justify-end gap-2">
-                    <flux:button icon="plus" variant="primary" onclick="window.location.href='{{ route('permits.form', ['student' => $student->id]) }}'">Buat Izin</flux:button>
+                    @if (auth()->user()->role->name == 'admin' || auth()->user()->role->name == 'keamanan' || auth()->user()->role->name == 'kesehatan')
+                        <flux:button icon="plus" variant="primary" onclick="window.location.href='{{ route('permits.form', ['student' => $student->id]) }}'">Buat Izin</flux:button>
+                    @endif
                 </div>
             </div>
+            @if (auth()->user()->role->name == 'admin' || auth()->user()->role->name == 'sekretaris')
             <div class="flex justify-end items-center gap-4 mt-4">
                 <flux:button icon="pencil" variant="primary" onclick="window.location.href='{{ route('students.edit', ['student' => $student->id]) }}'">Edit</flux:button>
                 <flux:modal.trigger name="drop_student">
@@ -64,6 +109,7 @@
                     <flux:button icon="trash" variant="danger">Hapus</flux:button>
                 </flux:modal.trigger>
             </div>
+            @endif
             {{-- content end here --}}
         </div>
     </div>
