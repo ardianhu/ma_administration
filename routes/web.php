@@ -82,8 +82,8 @@ Route::middleware(['auth'])->group(function () {
     Route::get('roles/edit/{role}', \App\Livewire\RoleForm::class)->name('roles.edit');
 
     Route::get('users', \App\Livewire\UserList::class)->name('users');
-    Route::get('users/form', \App\Livewire\userForm::class)->name('users.form');
-    Route::get('users/edit/{user}', \App\Livewire\userForm::class)->name('users.edit');
+    Route::get('users/form', \App\Livewire\UserForm::class)->name('users.form');
+    Route::get('users/edit/{user}', \App\Livewire\UserForm::class)->name('users.edit');
 
     Route::get('dorms', \App\Livewire\DormList::class)->name('dorms');
     Route::get('dorms/form', \App\Livewire\DormForm::class)->name('dorms.form');
