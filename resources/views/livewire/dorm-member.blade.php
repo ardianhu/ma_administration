@@ -27,9 +27,14 @@
                                 <div class="flex items-center justify-between">
                                     <div class="">{{ $dorm_member->name }}</div>
                                     @if (auth()->user()->role->name == 'admin' || auth()->user()->role->name == 'sekretaris')
+                                    <div>
+                                    <a href="{{ route('students.detail', $dorm_member->id) }}">
+                                        <flux:button icon="eye" size="sm" variant="primary" />
+                                    </a>
                                     <flux:modal.trigger name="remove_member">
                                         <flux:button variant="danger" size="sm" icon="trash" wire:click="updateSelected({{ $dorm_member->id }})" />
                                     </flux:modal.trigger>
+                                    </div>
                                     @endif
                                 </div>
                                 @endforeach

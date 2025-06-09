@@ -8,6 +8,7 @@
 /vendor
 .env
 .env.backup
+ma_administration.zip
 .env.production
 .phpactor.json
 .phpunit.result.cache

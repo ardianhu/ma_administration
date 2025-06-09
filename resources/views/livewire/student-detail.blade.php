@@ -56,7 +56,8 @@
                             $color = match($status) {
                                 'green' => 'bg-green-500',
                                 'yellow' => 'bg-yellow-400',
-                                'red' => 'bg-red-500',
+                                'red' => 'bg-red-400',
+                                'darker_red' => 'bg-red-800',
                                 default => 'bg-zinc-500',
                             };
                         
@@ -92,10 +93,17 @@
                         <div class="bg-red-500 w-2 h-2 rounded-xs inline-block"></div>
                         <div class="inline-block text-xs">Telat</div>
                     </div>
+                    <div>
+                        <div class="bg-red-800 w-2 h-2 rounded-xs inline-block"></div>
+                        <div class="inline-block text-xs">Tanpa izin</div>
+                    </div>
                 </div>
                 <div class="flex items-center justify-end gap-2">
                     @if (auth()->user()->role->name == 'admin' || auth()->user()->role->name == 'keamanan' || auth()->user()->role->name == 'kesehatan')
-                        <flux:button icon="plus" variant="primary" onclick="window.location.href='{{ route('permits.form', ['student' => $student->id]) }}'">Buat Izin</flux:button>
+                        <flux:button icon="plus" variant="primary" onclick="window.location.href='{{ route('permits.form', ['student' => $student->id]) }}'">Izin</flux:button>
+                    @endif
+                    @if (auth()->user()->role->name == 'admin' || auth()->user()->role->name == 'keamanan')
+                        <flux:button icon="plus" variant="primary" onclick="window.location.href='{{ route('violations.form', ['student' => $student->id]) }}'">Pelanggaran</flux:button>
                     @endif
                 </div>
             </div>

@@ -2,15 +2,15 @@
 
 namespace App\Exports;
 
-use App\Models\Permit;
+use App\Models\Student;
+use App\Models\Violation;
 use Maatwebsite\Excel\Concerns\FromCollection;
 
-class PermitExport implements FromCollection
+class ViolationExport implements FromCollection
 {
     protected $startDate;
     protected $endDate;
     protected $dorm_id;
-
     protected $dorm;
 
     public function __construct($startDate, $endDate, $dorm_id)
@@ -19,14 +19,13 @@ class PermitExport implements FromCollection
         $this->endDate = $endDate;
         $this->dorm_id = $dorm_id;
     }
-
     /**
      * @return \Illuminate\Support\Collection
      */
     public function collection()
     {
-        $permit = Permit::with(['student', 'user'])
-            ->whereBetween('leave_on', [$this->startDate, $this->endDate])
+        $violations = Violation::with(['student'])
+            ->whereBetween('violation_date', [$this->startDate, $this->endDate])
             ->when($this->dorm_id !== null && $this->dorm_id !== '', function ($query) {
                 $query->whereHas('student', function ($q) {
                     $q->where('dorm_id', $this->dorm_id);
@@ -41,24 +40,18 @@ class PermitExport implements FromCollection
         // Columns to include
         $include = [
             'student.name',
-            'user.name',
-            'permit_type',
-            'leave_on',
-            'back_on',
-            'arrive_on',
-            'reason',
-            'destination',
+            'violation_type',
+            'violation_description',
+            'violation_date',
+            'resolved_at'
         ];
-        // Custom header names (must match $include order)
+
         $customHeaders = [
             'Nama Santri',
-            'Pemberi Izin',
-            'Jenis Izin',
-            'Tanggal Izin',
-            'Tanggal Kembali',
-            'Tanggal Tiba',
-            'Alasan',
-            'Tujuan',
+            'Jenis Pelanggaran',
+            'Deskripsi Pelanggaran',
+            'Tanggal Pelanggaran',
+            'Tanggal Penyelesaian'
         ];
 
         $header = collect($customHeaders)
@@ -69,20 +62,18 @@ class PermitExport implements FromCollection
         $rows = [];
         // First row: title
         $rows[] = [
-            'Rekap Izin dari ' . $this->startDate . ' sampai ' . $this->endDate .
+            'Rekap Pelanggaran dari ' . $this->startDate . ' sampai ' . $this->endDate .
                 ($this->dorm_id ? ' | Kamar: ' . $this->dorm->block . '-' . $this->dorm->room_number . ' (' . $this->dorm->zone . ')' : '')
         ];
         // Second row: header
         $rows[] = $header;
 
         // Data rows
-        foreach ($permit as $i => $item) {
+        foreach ($violations as $i => $item) {
             $row = [$i + 1];
             foreach ($include as $field) {
                 if ($field === 'student.name') {
                     $row[] = optional($item->student)->name;
-                } elseif ($field === 'user.name') {
-                    $row[] = optional($item->user)->name;
                 } else {
                     $row[] = $item->{$field};
                 }

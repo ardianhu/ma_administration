@@ -11,7 +11,7 @@
                     <h2 class="text-lg flex-1 font-semibold text-gray-900 dark:text-white">Daftar Perizinan</h2>
                     <div class="flex items-center justify-end flex-1 gap-2">
                         <flux:dropdown>
-                            <flux:button icon="funnel">Filter</flux:button>
+                            <flux:button icon="funnel" />
 
                             <flux:menu>
                                 <flux:menu.item href="{{ route('permits') }}">Semua</flux:menu.item>
@@ -30,12 +30,12 @@
                             </flux:menu>
                         </flux:dropdown>
                         <flux:modal.trigger name="download-permit">
-                            <flux:button icon="folder-arrow-down">Download</flux:button>
+                            <flux:button icon="folder-arrow-down" />
                         </flux:modal.trigger>
                         <flux:input icon="magnifying-glass" class="hidden md:inline" wire:model.live.debounce.300ms="search" placeholder="Cari santri" autocomplete="off" />
                         @if (auth()->user()->role->name == 'admin' || auth()->user()->role->name == 'keamanan' || auth()->user()->role->name == 'kesehatan')
                         <a href={{ route('permits.form') }}>
-                            <flux:button variant="primary">Buat Izin</flux:button>
+                            <flux:button icon="plus" variant="primary">Izin</flux:button>
                         </a>
                         @endif
                     </div>
@@ -256,8 +256,18 @@
                 <flux:heading size="lg">Download rekap izin</flux:heading>
                 <flux:text class="mt-2">file akan didownload dalam format excel.</flux:text>
             </div>
-            <flux:input wire:model="exportStartDate" label="Mulai tanggal" type="date" />
-            <flux:input wire:model="exportEndDate" label="Sampai tanggal" type="date" />
+            <flux:select wire:model="dorm_id" :label="__('Kamar')" placeholder="Pilih kamar">
+                @foreach ($dorms as $dorm)
+                <flux:select.option value="{{ $dorm->id }}">{{ $dorm->block }}-{{ $dorm->room_number }}({{ $dorm->zone }})</flux:select.option>
+                @endforeach
+            </flux:select>
+            <flux:text class="text-xs" color="">Abaikan kamar untuk download semua data.</flux:text>
+            <flux:select wire:model="download_type" :label="__('Tipe Download')" placeholder="Pilih tipe download" required>
+                <flux:select.option value="accumulation">Akumulasi</flux:select.option>
+                <flux:select.option value="all">Semua</flux:select.option>
+            </flux:select>
+            <flux:input wire:model="exportStartDate" label="Mulai tanggal" type="date" required/>
+            <flux:input wire:model="exportEndDate" label="Sampai tanggal" type="date" required/>
             <div class="flex">
                 <flux:spacer />
                 <flux:button type="submit" variant="primary" wire:click="downloadPermit()">Download</flux:button>

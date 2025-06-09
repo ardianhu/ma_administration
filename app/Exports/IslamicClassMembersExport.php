@@ -25,12 +25,12 @@ class IslamicClassMembersExport implements FromCollection
 
         // Columns to include
         $include = [
+            'nis',
             'name',
-            'birth_date',
             'address',
+            'dob',
             'th_child',
             'siblings_count',
-            'nis',
             'nisn',
             'father_name',
             'father_phone',
@@ -42,12 +42,12 @@ class IslamicClassMembersExport implements FromCollection
 
         // Custom header names (must match $include order)
         $customHeaders = [
+            'NIS',
             'Nama',
-            'Tanggal Lahir',
             'Alamat',
+            'Tanggal Lahir',
             'Anak Ke-',
             'Jumlah Saudara',
-            'NIS',
             'NISN',
             'Nama Ayah',
             'No. HP Ayah',

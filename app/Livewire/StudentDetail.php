@@ -7,6 +7,7 @@ use App\Models\Dorm;
 use App\Models\IslamicClass;
 use App\Models\Permit;
 use App\Models\Student;
+use App\Models\Violation;
 use Carbon\Carbon;
 use Carbon\CarbonPeriod;
 use Livewire\Component;
@@ -105,34 +106,62 @@ class StudentDetail extends Component
                 ->where('academic_year_id', $academicYear->id)
                 ->get();
 
+            $violations = Violation::where('student_id', $studentModel->id)
+                ->where('academic_year_id', $academicYear->id)
+                ->get();
+
             // create a daily status of array
             $this->heatmap = $dates->mapWithKeys(function ($date) use ($today) {
-                return [$date => Carbon::parse($date)->gt($today) || Carbon::parse($date)->lt($this->registration_date) ? 'gray' : 'green'];
+                return [$date => Carbon::parse($date)->gt($today) || Carbon::parse($date)->lt($this->registration_date) || $this->student->drop_date != null ? 'gray' : 'green'];
             });
 
-            foreach ($permits as $permit) {
-                $leaveDate = Carbon::parse($permit->leave_on);
-                $backDate = Carbon::parse($permit->back_on);
-                $arriveDate = $permit->arrive_on ? Carbon::parse($permit->arrive_on) : null;
+            // add marker if the drop_date is null
 
-                // mark yellow during permit
-                $leavePeriod = CarbonPeriod::create($leaveDate, $backDate);
-                foreach ($leavePeriod as $day) {
-                    $dayStr = $day->format('Y-m-d');
-                    if (isset($this->heatmap[$dayStr])) {
-                        $this->heatmap[$dayStr] = 'yellow';
+            if ($this->student->drop_date == null) {
+                foreach ($permits as $permit) {
+                    $leaveDate = Carbon::parse($permit->leave_on);
+                    $backDate = Carbon::parse($permit->back_on);
+                    $arriveDate = $permit->arrive_on ? Carbon::parse($permit->arrive_on) : null;
+
+                    // mark yellow during permit
+                    $leavePeriod = CarbonPeriod::create($leaveDate, $backDate);
+                    foreach ($leavePeriod as $day) {
+                        $dayStr = $day->format('Y-m-d');
+                        if (isset($this->heatmap[$dayStr])) {
+                            $this->heatmap[$dayStr] = 'yellow';
+                        }
+                    }
+
+                    // mark red if returned late or hasn't returned yet
+                    if (($arriveDate && $arriveDate->gt($backDate)) || (!$arriveDate && $backDate->lt($today))) {
+                        $lateEnd = $arriveDate ?? $today->copy()->addDay(); // include today
+                        $latePeriod = CarbonPeriod::create($backDate->copy()->addDay(), $lateEnd);
+                        foreach ($latePeriod as $day) {
+                            $dayStr = $day->format('Y-m-d');
+                            if (isset($this->heatmap[$dayStr])) {
+                                $this->heatmap[$dayStr] = 'red';
+                            }
+                        }
                     }
                 }
 
-                // mark red if returned late or hasn't returned yet
-                if (($arriveDate && $arriveDate->gt($backDate)) || (!$arriveDate && $backDate->lt($today))) {
-                    $lateEnd = $arriveDate ?? $today->copy()->addDay(); // include today
-                    $latePeriod = CarbonPeriod::create($backDate->copy()->addDay(), $lateEnd);
-                    foreach ($latePeriod as $day) {
-                        $dayStr = $day->format('Y-m-d');
-                        if (isset($this->heatmap[$dayStr])) {
-                            $this->heatmap[$dayStr] = 'red';
+                foreach ($violations as $violation) {
+                    if ($violation->violation_type == 'pulang') {
+                        $violationDate = Carbon::parse($violation->violation_date);
+                        $violationResolved = $violation->resolved_at ? Carbon::parse($violation->resolved_at) : today();
+
+                        // If not resolved, include today as red
+                        $endDate = $violation->resolved_at ? $violationResolved : today()->copy()->addDay();
+
+                        $violationPeriod = CarbonPeriod::create($violationDate, $endDate);
+                        foreach ($violationPeriod as $day) {
+                            $dayStr = $day->format('Y-m-d');
+                            if (isset($this->heatmap[$dayStr])) {
+                                $this->heatmap[$dayStr] = 'darker_red';
+                            }
                         }
+                    } elseif ($violation->violation_type == 'lainnya') {
+                        // Handle other types of violations if needed
                     }
                 }
             }
@@ -153,6 +182,7 @@ class StudentDetail extends Component
     public function deleteStudent()
     {
         Permit::where('student_id', $this->student->id)->delete();
+        Violation::where('student_id', $this->student->id)->delete();
         $this->student->delete();
         session()->flash('message', 'Santri berhasil dihapus.');
         return redirect()->route('students');
@@ -166,6 +196,7 @@ class StudentDetail extends Component
             'dorm_id' => null,
             'islamic_class_id' => null
         ]);
+        Violation::where('student_id', $this->student->id)->delete();
         Permit::where('student_id', $this->student->id)->delete();
         session()->flash('message', 'Santri berhasil dikeluarkan.');
         return redirect()->route('students');

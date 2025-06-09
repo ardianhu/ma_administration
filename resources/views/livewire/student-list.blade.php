@@ -12,8 +12,25 @@
                     <div class="flex items-center justify-end flex-1 gap-2">
                         <flux:input icon="magnifying-glass" class="hidden md:inline" wire:model.live.debounce.300ms="search" placeholder="Cari santri" />
                         @if (auth()->user()->role->name == 'admin' || auth()->user()->role->name == 'sekretaris')
+                        <flux:dropdown>
+                            <flux:button icon="document" />
+
+                            <flux:menu>
+                                <flux:menu.item href="#">
+                                    <flux:modal.trigger name="upload_excel">
+                                        <flux:button icon="arrow-up-on-square" class="w-full" variant="filled">Upload Excel</flux:button>
+                                    </flux:modal.trigger>
+                                </flux:menu.item>
+                                
+                                <flux:menu.separator />
+                                
+                                <flux:menu.item href="#">
+                                    <flux:button icon="arrow-down-on-square" class="w-full" variant="filled" wire:click="downloadExcel()">Download Excel</flux:button>
+                                </flux:menu.item>
+                            </flux:menu>
+                        </flux:dropdown>
                         <a href={{ route('students.form') }}>
-                            <flux:button variant="primary">Tambah Santri</flux:button>
+                            <flux:button icon="plus" variant="primary">Santri</flux:button>
                         </a>
                         @endif
                     </div>
@@ -90,6 +107,9 @@
                                     @if ($student->status == 'late')
                                         <flux:badge size="sm" color="red">Telat</flux:badge>
                                     @endif
+                                    @if ($student->status == 'leave_not_returned')
+                                        <flux:badge size="sm" color="red">Kabur</flux:badge>
+                                    @endif
                                 </div>
                             </div>
                         </div>
@@ -102,4 +122,27 @@
             {{-- content end here --}}
         </div>
     </div>
+    <flux:modal name="upload_excel" class="md:w-96">
+        <div class="space-y-6">
+            <div>
+                <flux:heading size="lg">Upload data santri</flux:heading>
+                <flux:text class="mt-2">Pilih file dalam format excel.</flux:text>
+            </div>
+            <flux:select wire:model="dorm_id" :label="__('Kamar')" placeholder="Pilih kamar">
+                @foreach ($dorms as $dorm)
+                <flux:select.option value="{{ $dorm->id }}">{{ $dorm->block }}-{{ $dorm->room_number }}({{ $dorm->zone }})</flux:select.option>
+                @endforeach
+            </flux:select>
+            <flux:input wire:model="file" label="File" type="file" />
+            <div class="flex">
+                <flux:spacer />
+                <flux:button 
+                    type="submit" 
+                    variant="primary" 
+                    wire:click="uploadExcel()"
+                    wire:loading.attr="disabled"
+                >Upload</flux:button>
+            </div>
+        </div>
+    </flux:modal>
 </section>

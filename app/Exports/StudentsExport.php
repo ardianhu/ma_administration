@@ -2,61 +2,82 @@
 
 namespace App\Exports;
 
-use App\Models\Dorm;
 use App\Models\Student;
 use Maatwebsite\Excel\Concerns\FromCollection;
 
-class DormMembersExport implements FromCollection
+class StudentsExport implements FromCollection
 {
-    protected $dormId;
-
-    public function __construct($dormId)
-    {
-        $this->dormId = $dormId;
-    }
-
     /**
      * @return \Illuminate\Support\Collection
      */
     public function collection()
     {
-        // Get the students with the specified dorm_id
-        $students = Student::where('dorm_id', $this->dormId)->get();
-
-        $dorm = Dorm::find($this->dormId);
+        $students = Student::whereNull('drop_date')
+            ->orderBy('nis', 'asc')
+            ->get();
 
         // Columns to include
         $include = [
             'nis',
             'name',
+            'gender',
             'address',
             'dob',
             'th_child',
             'siblings_count',
+            'education',
             'nisn',
             'father_name',
+            'father_dob',
+            'father_address',
             'father_phone',
+            'father_education',
+            'father_job',
             'mother_name',
+            'mother_dob',
+            'mother_address',
             'mother_phone',
+            'mother_education',
+            'mother_job',
             'guardian_name',
+            'guardian_dob',
+            'guardian_address',
             'guardian_phone',
+            'guardian_education',
+            'guardian_job',
+            'guardian_relationship',
         ];
 
         // Custom header names (must match $include order)
         $customHeaders = [
             'NIS',
             'Nama',
+            'Jenis Kelamin',
             'Alamat',
             'Tanggal Lahir',
             'Anak Ke-',
             'Jumlah Saudara',
+            'Pendidikan',
             'NISN',
             'Nama Ayah',
+            'Tanggal Lahir Ayah',
+            'Alamat Ayah',
             'No. HP Ayah',
+            'Pendidikan Ayah',
+            'Pekerjaan Ayah',
             'Nama Ibu',
+            'Tanggal Lahir Ibu',
+            'Alamat Ibu',
             'No. HP Ibu',
+            'Pendidikan Ibu',
+            'Pekerjaan Ibu',
             'Nama Wali',
+            'Tanggal Lahir Wali',
+            'Alamat Wali',
             'No. HP Wali',
+            'Pendidikan Wali',
+            'Pekerjaan Wali',
+            'Hubungan Wali',
         ];
 
         // Prepare the header row with numbering
@@ -74,7 +95,7 @@ class DormMembersExport implements FromCollection
 
         // Prepare the export collection
         $export = collect([
-            ['Kamar: ' . $dorm->block . '-' . $dorm->room_number], // First row
+            ['Data Santri'], // First row
             $header,                     // Header row
         ])->concat($rows);
 

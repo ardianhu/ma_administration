@@ -10,6 +10,7 @@ class Student extends Model
     protected $fillable = [
         'nis',
         'name',
+        'gender',
         'address',
         'dob',
         'th_child',
@@ -55,5 +56,9 @@ class Student extends Model
     public function permits()
     {
         return $this->hasMany(Permit::class);
+    }
+    public function violations()
+    {
+        return $this->hasMany(Violation::class);
     }
 }

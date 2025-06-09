@@ -96,6 +96,7 @@ Route::middleware(['auth'])->group(function () {
     Route::get('class/member/{islamic_class}', \App\Livewire\IslamicClassMember::class)->name('class.member');
 
     Route::get('students', \App\Livewire\StudentList::class)->name('students');
+    Route::get('students/alumni', \App\Livewire\StudentList::class)->name('students.alumni');
     Route::get('students/form', \App\Livewire\StudentForm::class)->name('students.form');
     Route::get('students/edit/{student}', \App\Livewire\StudentForm::class)->name('students.edit');
     Route::get('students/detail/{student}', \App\Livewire\StudentDetail::class)->name('students.detail');
@@ -107,6 +108,10 @@ Route::middleware(['auth'])->group(function () {
     Route::get('permits', \App\Livewire\PermitList::class)->name('permits');
     Route::get('permits/form', \App\Livewire\PermitForm::class)->name('permits.form');
     Route::get('permits/edit/{permit}', \App\Livewire\AcademicYearForm::class)->name('permits.edit');
+
+    Route::get('violations', \App\Livewire\ViolationList::class)->name('violations');
+    Route::get('violations/form', \App\Livewire\ViolationForm::class)->name('violations.form');
+    Route::get('violations/edit/{violation}', \App\Livewire\ViolationForm::class)->name('violations.edit');
 });
 
 require __DIR__ . '/auth.php';

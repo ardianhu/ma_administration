@@ -1,5 +1,5 @@
 <section class="w-full">
-    @include('partials.permits-heading')
+    @include('partials.violations-heading')
     <div class="self-stretch">
         <flux:heading>{{ $heading ?? '' }}</flux:heading>
         <flux:subheading>{{ $subheading ?? '' }}</flux:subheading>
@@ -49,21 +49,17 @@
                         <fieldset {{ $selectedStudent ? '' : 'disabled' }} class=" space-y-6">
                         <flux:input :label="__('Nama')" value="{{ ($selectedStudent) ? $selectedStudent->name : '' }}" type="text" disabled autocomplete="name" />
                         @error('student_id') <span class="text-red-500">{{ $message }}</span> @enderror
-                        <flux:select wire:model="permit_type" :label="__('Jenis Izin')" placeholder="Sakit/Kepentingan">
-                            <flux:select.option value="sakit">Sakit</flux:select.option>
-                            <flux:select.option value="kepentingan">Kepentingan</flux:select.option>
+                        <flux:select wire:model="violation_type" :label="__('Jenis Pelanggaran')" placeholder="Pulang/Lainnya" required>
+                            <flux:select.option value="pulang">Pulang</flux:select.option>
+                            <flux:select.option value="lainnya">Lainnya</flux:select.option>
                         </flux:select>
-                        @error('permit_type') <span class="text-red-500">{{ $message }}</span> @enderror
-                        <flux:input wire:model="leave_on" :label="__('Tgl. Pulang')" type="datetime-local" autofocus autocomplete="leave_on" />
-                        @error('leave_on') <span class="text-red-500">{{ $message }}</span> @enderror
-                        <flux:input wire:model="back_on" :label="__('Tgl. Kembali')" type="datetime-local" autofocus autocomplete="back_on" />
-                        @error('back_on') <span class="text-red-500">{{ $message }}</span> @enderror
-                        <flux:input wire:model="reason" :label="__('Kepentingan')" type="text" placeholder="Alasan izin" autofocus autocomplete="reason" />
-                        @error('reason') <span class="text-red-500">{{ $message }}</span> @enderror
-                        <flux:input wire:model="destination" :label="__('Tujuan')" type="text" placeholder="Tujuan Pulang" autofocus autocomplete="destination" />
-                        @error('destination') <span class="text-red-500">{{ $message }}</span> @enderror
+                        @error('violation_type') <span class="text-red-500">{{ $message }}</span> @enderror
+                        <flux:input wire:model="violation_date" :label="__('Tgl. Pelanggaran')" type="datetime-local" autofocus autocomplete="violation_date" />
+                        @error('violation_date') <span class="text-red-500">{{ $message }}</span> @enderror
+                        <flux:input wire:model="violation_description" :label="__('Keterangan')" type="text" placeholder="Keterangan Pelanggaran" autofocus autocomplete="violation_description" />
+                        @error('violation_description') <span class="text-red-500">{{ $message }}</span> @enderror
                       <div>
-                        <flux:button type="submit" class="w-full lg:w-auto" variant="primary">{{ $permit ? 'Update Izin' : 'Buat Izin' }}</flux:button>
+                        <flux:button type="submit" class="w-full lg:w-auto" variant="primary">{{ $violation ? 'Update Pelanggaran' : 'Buat Pelanggaran' }}</flux:button>
                       </div>
                       </fieldset>
                     </form>

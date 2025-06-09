@@ -2,12 +2,40 @@
 
 namespace App\Livewire;
 
+use App\Exports\StudentsExport;
+use App\Imports\StudentImport;
+use App\Models\Dorm;
 use Livewire\Component;
+use Livewire\WithFileUploads;
 use Livewire\WithPagination;
+use Maatwebsite\Excel\Facades\Excel;
 
 class StudentList extends Component
 {
     use WithPagination;
+    use WithFileUploads;
+
+    public $file;
+
+    public $dorm_id = '';
+
+    protected $rules = [
+        'file' => 'required|file|mimes:xlsx,xls'
+    ];
+
+    public function uploadExcel()
+    {
+        $this->validate();
+        Excel::import(new StudentImport($this->dorm_id), $this->file->getRealPath());
+        $this->file = null;
+        session()->flash('message', 'Data santri berhasil diupload.');
+        return redirect()->route('students');
+    }
+
+    public function downloadExcel()
+    {
+        return Excel::download(new StudentsExport(), 'data_santri.xlsx');
+    }
 
     public $search = '';
 
@@ -22,14 +50,25 @@ class StudentList extends Component
             $this->search = request()->query('dashboard_search');
         }
 
-        $students = \App\Models\Student::with('permits')
-            ->whereNull('drop_date')
-            ->where(function ($query) {
-                $query->where('name', 'like', '%' . $this->search . '%')
-                    ->orWhere('nisn', 'like', '%' . $this->search . '%');
-            })
-            ->orderBy('name', 'asc')
-            ->paginate(10);
+        if (request()->routeIs('students.alumni')) {
+            $students = \App\Models\Student::with('permits')
+                ->whereNotNull('drop_date')
+                ->where(function ($query) {
+                    $query->where('name', 'like', '%' . $this->search . '%')
+                        ->orWhere('nisn', 'like', '%' . $this->search . '%');
+                })
+                ->orderBy('name', 'asc')
+                ->paginate(10);
+        } else {
+            $students = \App\Models\Student::with('permits')
+                ->whereNull('drop_date')
+                ->where(function ($query) {
+                    $query->where('name', 'like', '%' . $this->search . '%')
+                        ->orWhere('nisn', 'like', '%' . $this->search . '%');
+                })
+                ->orderBy('name', 'asc')
+                ->paginate(10);
+        }
 
         $students->getCollection()->transform(function ($student) {
             $permits = $student->permits;
@@ -44,11 +83,29 @@ class StudentList extends Component
                 $student->status = 'unknown';
             }
 
+            $violations = $student->violations;
+            if (
+                $violations->isNotEmpty() &&
+                $violations->every(
+                    fn($violation) =>
+                    $violation->violation_date !== null &&
+                        $violation->resolved_at == null &&
+                        $violation->violation_type === 'pulang'
+                )
+            ) {
+                $student->status = 'leave_not_returned';
+            }
+
             return $student;
         });
 
+        // dd($students);
+
+        $dorms = Dorm::all();
+
         return view('livewire.student-list', [
             'students' => $students,
+            'dorms' => $dorms,
         ]);
     }
 }

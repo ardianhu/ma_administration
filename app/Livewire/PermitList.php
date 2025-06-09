@@ -3,6 +3,8 @@
 namespace App\Livewire;
 
 use App\Exports\PermitExport;
+use App\Exports\SimplePermitExport;
+use App\Models\Dorm;
 use App\Models\Permit;
 use Carbon\Carbon;
 use Livewire\Component;
@@ -20,6 +22,9 @@ class PermitList extends Component
     public $exportStartDate;
     public $exportEndDate;
 
+    public $dorm_id = '';
+    public $download_type = '';
+
     public function updatingSearch()
     {
         $this->resetPage();
@@ -30,7 +35,7 @@ class PermitList extends Component
         $query = Permit::whereHas('academicYear', function ($query) {
             $query->where('is_active', true);
         })
-            ->whereHas('user', function ($query) {
+            ->whereHas('student', function ($query) {
                 $query->where('name', 'like', '%' . $this->search . '%');
             });
 
@@ -47,8 +52,11 @@ class PermitList extends Component
 
         $permits = $query->orderBy('back_on', 'desc')->paginate(10);
 
+        $dorm = Dorm::all();
+
         return view('livewire.permit-list', [
             'permits' => $permits,
+            'dorms' => $dorm,
         ]);
     }
 
@@ -106,6 +114,12 @@ class PermitList extends Component
 
     public function downloadPermit()
     {
-        return Excel::download(new PermitExport($this->exportStartDate, $this->exportEndDate), 'rekap_izin.xlsx');
+        if ($this->download_type == 'accumulation') {
+            return Excel::download(new SimplePermitExport($this->exportStartDate, $this->exportEndDate, $this->dorm_id), 'akumulasi_izin.xlsx');
+        } elseif ($this->download_type == 'all') {
+            return Excel::download(new PermitExport($this->exportStartDate, $this->exportEndDate, $this->dorm_id), 'rekap_izin.xlsx');
+        } else {
+            session()->flash('error', 'Tipe download tidak valid.');
+        }
     }
 }
