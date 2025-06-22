@@ -38,7 +38,7 @@
                                     <a href="{{ route('roles.edit', $role->id) }}">     
                                         <flux:button variant="primary">Edit</flux:button>
                                     </a>
-                                    <flux:button variant="primary" wire:click="deleteRole({{ $role->id }})" variant="danger">Hapus</flux:button>
+                                    {{-- <flux:button variant="primary" wire:click="deleteRole({{ $role->id }})" variant="danger">Hapus</flux:button> --}}
                 
                                     {{-- <form action="{{ route('roles.delete', ['id' => $role->id]) }}" method="POST" class="inline">
                                         @csrf

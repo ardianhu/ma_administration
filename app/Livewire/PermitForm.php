@@ -62,6 +62,13 @@ class PermitForm extends Component
                 $this->selectedStudent = Student::findOrFail($student);
                 $this->student_id = $this->selectedStudent->id;
             }
+            $this->leave_on = now()
+                ->setTimezone('Asia/Jakarta') // GMT+7
+                ->format('Y-m-d\TH:i');
+            $this->back_on = now()
+                ->addDays(2)
+                ->setTime(23, 0)
+                ->format('Y-m-d\TH:i');
         }
         // dd($this->permit_type);
     }

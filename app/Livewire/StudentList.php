@@ -19,9 +19,18 @@ class StudentList extends Component
 
     public $dorm_id = '';
 
+    public $is_alumni = false;
+
     protected $rules = [
         'file' => 'required|file|mimes:xlsx,xls'
     ];
+
+    public function mount()
+    {
+        if (request()->routeIs('students.alumni')) {
+            $this->is_alumni = true;
+        }
+    }
 
     public function uploadExcel()
     {
@@ -50,7 +59,7 @@ class StudentList extends Component
             $this->search = request()->query('dashboard_search');
         }
 
-        if (request()->routeIs('students.alumni')) {
+        if ($this->is_alumni) {
             $students = \App\Models\Student::with('permits')
                 ->whereNotNull('drop_date')
                 ->where(function ($query) {

@@ -1,13 +1,15 @@
 <section class="w-full">
     @include('partials.students-heading')
     {{-- replace this later in the prod --}}
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/fabric.js/5.3.0/fabric.min.js"></script>
+    {{-- <script src="https://cdnjs.cloudflare.com/ajax/libs/fabric.js/5.3.0/fabric.min.js"></script> --}}
+    <script src="{{ asset('fabric/fabric.min.js') }}"></script>
     <div class="self-stretch">
         <flux:heading>{{ $heading ?? '' }}</flux:heading>
         <flux:subheading>{{ $subheading ?? '' }}</flux:subheading>
 
         <div class="mt-5 w-full">
             {{-- content start here --}}
+            {{-- detail santri --}}
             <div class="p-4 lg:p-8 h-full border border-solid border-zinc-200 dark:border-zinc-700 rounded-lg space-y-4">
                 <div class="font-bold text-xl">Detail santri</div>
                 <div class="space-y-2">
@@ -22,6 +24,24 @@
                     <div>Nama Wali: <span>{{ ($student->guardian_name) ? $student->guardian_name : '-' }}</span></div>
                 </div>
             </div>
+            {{-- kartu --}}
+            @if (auth()->user()->role->name == 'admin' || auth()->user()->role->name == 'sekretaris')
+            <div class="p-4 lg:p-8 h-full border border-solid border-zinc-200 dark:border-zinc-700 rounded-lg space-y-4 mt-4 hidden lg:block">
+                <div class="font-bold text-xl">Buat Kartu</div>
+                <flux:select class="mb-2" id="card_template" wire:model="card_template" :label="__('Jenis Kartu')" placeholder="Pilih jenis kartu" required>
+                    @foreach (File::files(public_path('card_template')) as $file)
+                        <flux:select.option value="{{ $file->getFilename() }}">{{ $file->getFilename() }}</flux:select.option>
+                    @endforeach
+                </flux:select>
+                <flux:input type="file" id="overlayImageInput" class="mb-2" label="Tambah foto" accept="image/*"/>
+                {{-- <input type="file" id="overlayImageInput" class="mt-2" accept="image/*" /> --}}
+                <canvas id="canvas" class="mb-2" width="856" height="540" style="border:1px solid #ccc;"></canvas>
+                <flux:button variant="filled" icon="arrow-path" onclick="resetCanvas()">Reset</flux:button>
+                <flux:button variant="filled" icon="plus" class="block" id="addDetailsBtn" onclick="addDetails()">Detail Kartu</flux:button>
+                <flux:button variant="primary" icon="folder-arrow-down" class="block" onclick="exportImage()">Download</flux:button>
+            </div>
+            @endif
+            {{-- perizinan --}}
             <div class="p-4 lg:p-8 h-full border border-solid border-zinc-200 dark:border-zinc-700 rounded-lg space-y-4 mt-4">
                 <div class="font-bold text-xl">Riwayat Izin</div>
                 @if ($student)
@@ -111,9 +131,9 @@
             </div>
             @if (auth()->user()->role->name == 'admin' || auth()->user()->role->name == 'sekretaris')
             <div class="flex justify-end items-center gap-4 mt-4">
-                <flux:modal.trigger name="generate_card">
+                {{-- <flux:modal.trigger name="generate_card">
                     <flux:button icon="printer" variant="filled">Kartu</flux:button>
-                </flux:modal.trigger>
+                </flux:modal.trigger> --}}
                 <flux:button icon="pencil" variant="filled" onclick="window.location.href='{{ route('students.edit', ['student' => $student->id]) }}'">Edit</flux:button>
                 <flux:modal.trigger name="drop_student">
                     <flux:button icon="no-symbol" variant="filled">Berhenti</flux:button>
@@ -189,22 +209,6 @@
         </div>
     </flux:modal>
     <script>
-
-    fabric.IText.prototype.initHiddenTextarea = (function(initHiddenTextarea) {
-        return function() {
-            var result = initHiddenTextarea.apply(this);
-            // Assuming your modal has a specific ID or class, e.g., 'my-modal-content'
-            var modalContent = document.getElementById('generate_card_modal'); 
-            if (modalContent) {
-                modalContent.appendChild(this.hiddenTextarea);
-            } else {
-                // Fallback to canvas wrapper if modal content not found
-                this.canvas.wrapperEl.appendChild(this.hiddenTextarea); 
-            }
-            return result;
-        };
-    })(fabric.IText.prototype.initHiddenTextarea);
-
 const canvas = new fabric.Canvas('canvas');
 
 const cardText = {
@@ -271,7 +275,11 @@ function addNewBackground() {
                 evented: false
             });
             canvas.add(img);
-            addText();
+            if (document.getElementById('card_template').value == 'alumni.png') {
+                addAlumniText();
+            } else {
+                addText();
+            }
         }, { crossOrigin: 'anonymous' });
     }
 }
@@ -309,6 +317,47 @@ function addText() {
     } else {
         addDateText();
     }
+}
+
+function addAlumniText() {
+    const text0 = new fabric.IText(cardText.name.toUpperCase(), {
+        left: 230,
+        top: 240,
+        fontSize: 36,
+        fontFamily: 'Arial',
+        fontWeight: 'bold',
+        fill: 'white',
+        stroke: null,
+        strokeWidth: 0
+    });
+    canvas.add(text0);
+    canvas.bringToFront(text0);
+    const text1 = new fabric.IText('NIS\nAlamat\nTetala', {
+        left: 230,
+        top: 320,
+        fontSize: 18,
+        fontFamily: 'Arial',
+        fontWeight: 'bold',
+        fill: textColor,
+        stroke: null,
+        strokeWidth: 0
+    });
+    canvas.add(text1);
+    canvas.bringToFront(text1);
+    const text2 = new fabric.IText(': ' + cardText.nis + '\n: ' + cardText.address + '\n: ' + cardText.dob, {
+        left: 300,
+        top: 320,
+        fontSize: 18,
+        fontFamily: 'Arial',
+        fontWeight: 'bold',
+        fill: textColor,
+        stroke: null,
+        strokeWidth: 0,
+        editable: true,
+    });
+    canvas.add(text2);
+    canvas.bringToFront(text2);
+    addDateTextAlumni();
 }
 
 function addMahromText() {
@@ -375,6 +424,27 @@ function addDateTextMahrom() {
     const dateText = new fabric.IText(formattedDate, {
         left: 400,
         top: 372,
+        fontSize: 17,
+        fontFamily: 'Arial',
+        fontWeight: 'bold',
+        fill: textColor,
+        stroke: null,
+        strokeWidth: 0
+    });
+    canvas.add(dateText);
+    canvas.bringToFront(dateText);
+}
+
+function addDateTextAlumni() {
+    const date = new Date();
+    const formattedDate = date.toLocaleDateString('id-ID', {
+        year: 'numeric',
+        month: 'long',
+        day: 'numeric'
+    });
+    const dateText = new fabric.IText(formattedDate, {
+        left: 680,
+        top: 390,
         fontSize: 17,
         fontFamily: 'Arial',
         fontWeight: 'bold',

@@ -32,6 +32,10 @@ class PermitList extends Component
         if (request()->has('status')) {
             $this->statusFilter = request()->get('status');
         }
+        $this->extended_back_on = now()
+            ->addDays(2)
+            ->setTime(23, 0)
+            ->format('Y-m-d\TH:i');
     }
 
     public function updatingSearch()
