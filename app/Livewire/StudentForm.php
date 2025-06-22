@@ -51,7 +51,7 @@ class StudentForm extends Component
     public $islamic_class_id = '';
 
     protected $rules = [
-        'nis' => 'nullable|integer|unique:students,nis',
+        'nis' => 'nullable|integer|unique:students,id',
         'name' => 'required|string|max:255',
         'gender' => 'required|in:L,P',
         'address' => 'nullable|string|max:255',
@@ -59,7 +59,7 @@ class StudentForm extends Component
         'th_child' => 'nullable|integer',
         'siblings_count' => 'nullable|integer',
         'education' => 'nullable|string|max:255',
-        'nisn' => 'nullable|integer|unique:students,nisn',
+        'nisn' => 'nullable|integer|unique:students,id',
         'registration_date' => 'nullable',
         'drop_date' => 'nullable|date',
         'drop_reason' => 'nullable|string|max:255',
