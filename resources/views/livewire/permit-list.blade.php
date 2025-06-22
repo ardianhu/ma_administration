@@ -26,7 +26,11 @@
 
                                 <flux:menu.separator />
 
-                                <flux:menu.item href="{{ route('permits', ['status' => 'late']) }}">Lambat</flux:menu.item>
+                                <flux:menu.item href="{{ route('permits', ['status' => 'late']) }}">Lambat (belum datang)</flux:menu.item>
+
+                                <flux:menu.separator />
+
+                                <flux:menu.item href="{{ route('permits', ['status' => 'late_arrived']) }}">Lambat (datang)</flux:menu.item>
                             </flux:menu>
                         </flux:dropdown>
                         <flux:modal.trigger name="download-permit">

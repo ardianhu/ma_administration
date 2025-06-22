@@ -25,7 +25,21 @@ class PermitList extends Component
     public $dorm_id = '';
     public $download_type = '';
 
+    public $statusFilter = '';
+
+    public function mount()
+    {
+        if (request()->has('status')) {
+            $this->statusFilter = request()->get('status');
+        }
+    }
+
     public function updatingSearch()
+    {
+        $this->resetPage();
+    }
+
+    public function updatingStatusFilter()
     {
         $this->resetPage();
     }
@@ -39,14 +53,19 @@ class PermitList extends Component
                 $query->where('name', 'like', '%' . $this->search . '%');
             });
 
-        if (request()->has('status')) {
-            $status = request()->get('status');
-            if ($status == 'active') {
+        if ($this->statusFilter) {
+            if ($this->statusFilter == 'active') {
                 $query->whereNull('arrive_on');
-            } elseif ($status == 'inactive') {
+            } elseif ($this->statusFilter == 'inactive') {
                 $query->whereNotNull('arrive_on');
-            } elseif ($status == 'late') {
-                $query->where('back_on', '<', Carbon::today());
+            } elseif ($this->statusFilter == 'late') {
+                // $query->where('back_on', '<', Carbon::today());
+                // back_on sebelum hari ini
+                $query->where('back_on', '<', Carbon::now()->startOfDay())->where('arrive_on', null);
+            } elseif ($this->statusFilter == 'late_arrived') {
+                // back_on sebelum arrive_on
+                $query->whereNotNull('arrive_on')
+                    ->whereColumn('back_on', '<', 'arrive_on');
             }
         }
 

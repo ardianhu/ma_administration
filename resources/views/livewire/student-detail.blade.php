@@ -315,7 +315,7 @@ function addMahromText() {
     const father = new fabric.IText('{{ $student->father_name ?? '' }}', {
         left: 123,
         top: 420,
-        fontSize: 24,
+        fontSize: 20,
         fill: textColor,
         stroke: null,
         strokeWidth: 0,
@@ -330,7 +330,7 @@ function addMahromText() {
     const mother = new fabric.IText('{{ $student->mother_name ?? '' }}', {
         left: 732,
         top: 420,
-        fontSize: 24,
+        fontSize: 20,
         fill: textColor,
         stroke: null,
         strokeWidth: 0,
