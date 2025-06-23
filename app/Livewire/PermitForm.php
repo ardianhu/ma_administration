@@ -67,7 +67,7 @@ class PermitForm extends Component
                 ->format('Y-m-d\TH:i');
             $this->back_on = now()
                 ->addDays(2)
-                ->setTime(23, 0)
+                ->setTime(23, 59)
                 ->format('Y-m-d\TH:i');
         }
         // dd($this->permit_type);

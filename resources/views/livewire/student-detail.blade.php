@@ -220,10 +220,12 @@ const cardText = {
 
 let backgroundImage = null;
 let textColor = '#000000';
+let downloadedFileName = '';
 
 // Upload Background Image
 document.getElementById('card_template').addEventListener('change', function (e) {
     const filename = e.target.value;
+    downloadedFileName = filename;
     if (!filename) return;
     // Assuming card_template images are in /card_template/ and are accessible publicly
     const imageUrl = `/card_template/${filename}`;
@@ -467,7 +469,7 @@ function exportImage() {
 
     const link = document.createElement('a');
     link.href = dataURL;
-    link.download = 'kartu-santri.png';
+    link.download = cardText.name.replace(/\s+/g, '-') + '_' + downloadedFileName;
     document.body.appendChild(link);
     link.click();
     document.body.removeChild(link);
